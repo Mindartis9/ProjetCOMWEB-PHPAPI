@@ -34,9 +34,9 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $table = ($role === 'professeur') ? 'professeurs' : 'eleves';
+    $table = ($role === 'professeur') ? 'professeur' : 'etudiant';
 
-    $stmt = $pdo->prepare("SELECT * FROM $table WHERE identifiant = :identifiant AND mot_de_passe = :mot_de_passe");
+    $stmt = $pdo->prepare("SELECT * FROM $table WHERE id_prof = :identifiant AND mdp_prof = :mot_de_passe");
     $stmt->execute([
         ':identifiant' => $identifiant,
         ':mot_de_passe' => $motDePasse
