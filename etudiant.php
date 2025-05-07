@@ -35,8 +35,10 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $table = ($role === 'professeur') ? 'professeur' : 'etudiant';
+    $identifiantColumn = ($role === 'professeur') ? 'id_prof' : 'id_etudiant';
+    $motDePasseColumn = ($role === 'professeur') ? 'mdp_prof' : 'mdp_etudiant';
 
-    $stmt = $pdo->prepare("SELECT * FROM $table WHERE id_prof = :identifiant AND mdp_prof = :mot_de_passe");
+    $stmt = $pdo->prepare("SELECT * FROM $table WHERE $identifiantColumn = :identifiant AND $motDePasseColumn = :mot_de_passe");
     $stmt->execute([
         ':identifiant' => $identifiant,
         ':mot_de_passe' => $motDePasse
