@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^etudiant/(.*)$ etudiant.php?id_etudiant=$1
+RewriteRule ^prof/(.*)$ prof.php?id_prof=$1
