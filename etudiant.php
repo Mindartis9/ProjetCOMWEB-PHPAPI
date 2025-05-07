@@ -1,28 +1,56 @@
 <?php
-    header('Access-Control-Allow-Origin: *');
-    header("Content-Type: text/html; charset=UTF-8");
+// Allow requests from Vite dev server (adjust if needed)
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
 
-    function envoiJSON($tab){
-    header('Content-Type: application/json');
-    $json = json_encode($tab, JSON_UNESCAPED_UNICODE);
-    echo $json;
+// Respond early to preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Read JSON input
+$input = json_decode(file_get_contents("php://input"), true);
+
+$role = $input['role'] ?? '';
+$identifiant = $input['identifiant'] ?? '';
+$motDePasse = $input['motDePasse'] ?? '';
+
+// Validate input
+if (!$role || !$identifiant || !$motDePasse) {
+    echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants.']);
+    exit;
+}
+
+// DB config
+$host = 'localhost';
+$dbname = 'poulpy2';
+$user = 'root';
+$pass = ''; // update if needed
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $table = ($role === 'professeur') ? 'professeur' : 'etudiant';
+
+    $stmt = $pdo->prepare("SELECT * FROM $table WHERE id_prof = :identifiant AND mdp_prof = :mot_de_passe");
+    $stmt->execute([
+        ':identifiant' => $identifiant,
+        ':mot_de_passe' => $motDePasse
+    ]);
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        echo json_encode(['status' => 'success', 'message' => "Bienvenue $role!", 'user' => $user]);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Identifiant ou mot de passe invalide.']);
     }
-    $host = 'localhost'; //variables de connexion
-    $dbname = 'poulpy2';
-    $username = 'root';
-    $password = '';
-    try {
-        $bdd = new PDO('mysql:host='. $host .';dbname='. $dbname .';charset=utf8',
-        $username, $password);
-        } catch(Exception $e) {
-        // Si erreur, tout arrêter
-        die('Erreur : '. $e->getMessage());
-        }
 
-        $requete = "SELECT nom_etudiant FROM `ETUDIANT` WHERE id_etudiant LIKE '".$_GET['id_etudiant']."'";
-        $resultat = $bdd->query($requete);
-        $tab = $resultat->fetchAll();
-        
-        envoiJSON($tab);
-    
+} catch (PDOException $e) {
+    echo json_encode(['status' => 'error', 'message' => 'Erreur de base de données.', 'details' => $e->getMessage()]);
+}
 ?>
