@@ -38,12 +38,13 @@ try {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
-            $stmtNotes = $pdo->prepare("SELECT n.valeur_note AS note, p.nom_matiere AS matiere, p.nom_prof AS professeur FROM notes n JOIN professeur p ON n.id_prof = p.id_prof WHERE n.id_etudiant = ?");
+            $stmtNotes = $pdo->prepare("SELECT n.valeur_note AS note, p.nom_matiere FROM notes n JOIN professeur p JOIN etudiant e ON n.id_prof = p.id_prof WHERE n.id_etudiant = ?");
             $stmtNotes->execute([$user['id_etudiant']]);
             $notes = $stmtNotes->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode([
                 'success' => true,
+                'nom_etudiant' => $user['nom_etudiant'],
                 'notes' => $notes
             ]);
             exit;
@@ -63,7 +64,7 @@ try {
 
         if ($user) {
             $stmtNotes = $pdo->prepare("
-            SELECT e.nom_etudiant AS nomEleve, p.nom_matiere AS matiere, n.valeur_note AS note
+            SELECT e.nom_etudiant AS nomEleve, p.nom_matiere AS matiere, n.valeur_note AS note, p.nom_prof AS nomProf
             FROM notes n
             JOIN etudiant e ON n.id_etudiant = e.id_etudiant
             JOIN professeur p ON n.id_prof = p.id_prof
@@ -74,6 +75,7 @@ try {
 
             echo json_encode([
                 'success' => true,
+                'nom_prof' => $user['nom_prof'],
                 'notes' => $notes
             ]);
             exit;
