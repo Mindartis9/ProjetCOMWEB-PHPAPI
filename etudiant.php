@@ -45,6 +45,7 @@ try {
             echo json_encode([
                 'success' => true,
                 'nom_etudiant' => $user['nom_etudiant'],
+                'prenom_etudiant' => $user['prenom_etudiant'],
                 'notes' => $notes
             ]);
             exit;
@@ -76,6 +77,7 @@ try {
             echo json_encode([
                 'success' => true,
                 'nom_prof' => $user['nom_prof'],
+                'prenom_prof' => $user['prenom_prof'],
                 'notes' => $notes
             ]);
             exit;
