@@ -63,7 +63,7 @@ try {
 
         if ($user) {
             $stmtNotes = $pdo->prepare("
-            SELECT e.nom_etudiant AS nomEleve, p.nom_matiere AS matiere, n.valeur_note AS note
+            SELECT e.nom_etudiant AS nomEleve, e.prenom_etudiant AS prenomEleve, p.nom_matiere AS matiere, n.valeur_note AS note, e.id_classe AS classe 
             FROM notes n
             JOIN etudiant e ON n.id_etudiant = e.id_etudiant
             JOIN professeur p ON n.id_prof = p.id_prof
