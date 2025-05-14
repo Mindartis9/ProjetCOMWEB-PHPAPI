@@ -38,7 +38,7 @@ try {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
-            $stmtNotes = $pdo->prepare("SELECT n.valeur_note AS note, p.nom_matiere AS matière, p.nom_prof AS professeur FROM notes n JOIN professeur p ON n.id_prof = p.id_prof WHERE n.id_etudiant = ?");
+            $stmtNotes = $pdo->prepare("SELECT n.valeur_note AS note, p.nom_matiere AS matiere, p.nom_prof AS professeur FROM notes n JOIN professeur p ON n.id_prof = p.id_prof WHERE n.id_etudiant = ?");
             $stmtNotes->execute([$user['id_etudiant']]);
             $notes = $stmtNotes->fetchAll(PDO::FETCH_ASSOC);
 
