@@ -21,8 +21,13 @@ if (!$prenomEleve || !$nomEleve  || !$valeurNote) {
     exit;
 }
 
+$host = 'localhost';
+$dbname = 'mmarchais002';
+$user = 'mmarchais002';
+$pass = 'IWILLSEEKMYTRUTH12*';
+
 try {
-    $pdo = new PDO("mysql:host=localhost;dbname=poulpy2;charset=utf8mb4", "root", "");
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   

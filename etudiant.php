@@ -21,9 +21,9 @@ if (!$role || !$identifiant || !$motDePasse) {
 }
 
 $host = 'localhost';
-$dbname = 'poulpy2';
-$user = 'root';
-$pass = '';
+$dbname = 'mmarchais002';
+$user = 'mmarchais002';
+$pass = 'IWILLSEEKMYTRUTH12*';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass);
