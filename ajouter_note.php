@@ -12,10 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $data = json_decode(file_get_contents("php://input"), true);
 
 $identifiant = $data['identifiant_prof'] ?? null;
-$idEtudiant = $data['id_etudiant'] ?? null;
+$prenomEleve = $data['prenom_etudiant'] ?? null;
+$nomEleve = $data['nom_etudiant'] ?? null;
 $valeurNote = $data['valeur_note'] ?? null;
 
-if (!$idEtudiant || !$valeurNote) {
+if (!$prenomEleve || !$nomEleve  || !$valeurNote) {
     echo json_encode(['success' => false, 'message' => 'Paramètres manquants.']);
     exit;
 }
@@ -24,6 +25,17 @@ try {
     $pdo = new PDO("mysql:host=localhost;dbname=poulpy2;charset=utf8mb4", "root", "");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+  
+    $stmt = $pdo->prepare("SELECT id_etudiant FROM etudiant WHERE prenom_etudiant = ? AND nom_etudiant = ?");
+    $stmt->execute([$prenomEleve, $nomEleve]);
+    $etudiant = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$etudiant) {
+        echo json_encode(['success' => false, 'message' => "Élève non trouvé."]);
+        exit;
+    }
+
+    $idEtudiant = $etudiant['id_etudiant'];
     $idProf = $identifiant;
 
     $stmt = $pdo->query("SELECT MAX(id_note) AS max_id FROM notes");
@@ -35,6 +47,7 @@ try {
 
     echo json_encode(['success' => true]);
     exit;
+
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     exit;
